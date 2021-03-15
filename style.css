@@ -1,0 +1,32 @@
+html {
+  height: 100%;
+}
+body {
+  height: 100%;
+  display: flex;
+  background-image: url("images/candy-crush-background-2.png");
+  justify-content: center;
+  align-items: center;
+}
+.grid {
+  margin-left: 80px;
+  width: 700px;
+  height: 700px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.grid div {
+  width: 70px;
+  height: 70px;
+}
+
+.scoreboard {
+  /* 800px = 700px(.grid width) + 80px(margin-left of .grid) + 20px(margin-left) */
+  width: calc(100% - 800px);;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-left: 20px;
+}
