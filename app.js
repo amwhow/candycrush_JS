@@ -14,6 +14,10 @@ document.addEventListener("DOMContentLoaded", () => {
     "url(images/blue-candy.png)",
   ];
 
+  const audio_3 = new Audio('https://candy-crush-js-audios.s3-ap-southeast-2.amazonaws.com/match_3.mp3');
+  const audio_4 = new Audio('https://candy-crush-js-audios.s3-ap-southeast-2.amazonaws.com/match_4.mp3');
+  const audio_5 = new Audio('https://candy-crush-js-audios.s3-ap-southeast-2.amazonaws.com/match_5.mp3');
+
   // Build the game board
   function buildBoard() {
     for (let i = 0; i < width * width; i++) {
@@ -27,78 +31,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
   buildBoard();
-
-  let colorBeingDragged;
-  let candyBeingDragged;
-  // Dragging function
-  squares.forEach((square) => square.addEventListener("dragstart", dragStart));
-  squares.forEach((square) => square.addEventListener("dragover", dragOver));
-  squares.forEach((square) => square.addEventListener("dragend", dragEnd));
-  squares.forEach((square) => square.addEventListener("dragenter", dragEnter));
-  squares.forEach((square) => square.addEventListener("dragleave", dragLeave));
-  squares.forEach((square) => square.addEventListener("drop", drop));
-
-  function dragStart(e) {
-    colorBeingDragged = e.target.style.backgroundImage;
-    candyBeingDragged = e.target.id;
-    e.target.style.opacity = "50%";
-  }
-  function dragOver(e) {
-    e.preventDefault();
-  }
-  function dragEnd(e) {
-    e.target.style.opacity = "100%";
-  }
-  function dragEnter(e) {
-    e.target.style.opacity = "50%";
-  }
-  function dragLeave(e) {
-    e.preventDefault();
-    e.target.style.opacity = "100%";
-  }
-  function drop(e) {
-    // valid move?
-    let validMove = [
-      parseInt(squares[candyBeingDragged].id) + 1,
-      parseInt(squares[candyBeingDragged].id) - 1,
-      parseInt(squares[candyBeingDragged].id) + width,
-      parseInt(squares[candyBeingDragged].id) - width,
-    ];
-    if (validMove.includes(parseInt(e.target.id))) {
-      // change the position of two candies
-      squares[candyBeingDragged].style.backgroundImage =
-        e.target.style.backgroundImage;
-      e.target.style.backgroundImage = colorBeingDragged;
-      e.target.style.opacity = "100%";
-    } else {
-      e.target.style.opacity = "100%";
-    }
-  }
-
-  // dropping new candies
-  function dropCandies() {
-    let firstRowIndex = [];
-    for (i = 0; i < width; i++) {
-      firstRowIndex.push(i);
-    }
-    for (i = 0; i < width * (width - 1); i++) {
-      if (squares[i + width].style.backgroundImage === "") {
-        // the [a. b] = [b, a] syntax
-        [
-          squares[i + width].style.backgroundImage,
-          squares[i].style.backgroundImage,
-        ] = [
-          squares[i].style.backgroundImage,
-          squares[i + width].style.backgroundImage,
-        ];
-      }
-      const isFirstRow = firstRowIndex.includes(i);
-      if (isFirstRow && squares[i].style.backgroundImage === "") {
-        squares[i].style.backgroundImage =
-          candyImages[Math.floor(Math.random() * candyImages.length)];
-      }
-    }
-  }
 
   // checking for candy matches
   function checkRowOfThree() {
@@ -125,6 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
         rowOfThree.forEach((index) => {
           squares[index].style.backgroundImage = "";
         });
+        audio_3.play()
         score += 300;
         scoreDisplay.innerHTML = score;
       }
@@ -158,6 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
         rowOfFour.forEach((index) => {
           squares[index].style.backgroundImage = "";
         });
+        audio_4.play()
         score += 400;
         scoreDisplay.innerHTML = score;
       }
@@ -216,6 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
         columnOfThree.forEach((index) => {
           squares[index].style.backgroundImage = "";
         });
+        audio_3.play()
         score += 300;
         scoreDisplay.innerHTML = score;
       }
@@ -242,8 +177,84 @@ document.addEventListener("DOMContentLoaded", () => {
         columnOfFour.forEach((index) => {
           squares[index].style.backgroundImage = "";
         });
+        audio_4.play()
         score += 400;
         scoreDisplay.innerHTML = score;
+      }
+    }
+  }
+
+
+  let colorBeingDragged;
+  let candyBeingDragged;
+  // Dragging function
+  squares.forEach((square) => square.addEventListener("dragstart", dragStart));
+  squares.forEach((square) => square.addEventListener("dragover", dragOver));
+  squares.forEach((square) => square.addEventListener("dragend", dragEnd));
+  squares.forEach((square) => square.addEventListener("dragenter", dragEnter));
+  squares.forEach((square) => square.addEventListener("dragleave", dragLeave));
+  squares.forEach((square) => square.addEventListener("drop", drop));
+
+  function dragStart(e) {
+    colorBeingDragged = e.target.style.backgroundImage;
+    candyBeingDragged = e.target.id;
+    e.target.style.opacity = "50%";
+  }
+  function dragOver(e) {
+    e.preventDefault();
+    e.target.style.cursor = "grabbing"
+  }
+  function dragEnd(e) {
+    e.target.style.opacity = "100%";
+  }
+  function dragEnter(e) {
+    e.target.style.opacity = "50%";
+  }
+  function dragLeave(e) {
+    e.preventDefault();
+    e.target.style.opacity = "100%";
+  }
+  function drop(e) {
+    e.target.style.cursor = "grab"
+    // valid move?
+    let validMove = [
+      parseInt(squares[candyBeingDragged].id) + 1,
+      parseInt(squares[candyBeingDragged].id) - 1,
+      parseInt(squares[candyBeingDragged].id) + width,
+      parseInt(squares[candyBeingDragged].id) - width,
+    ];
+    if (validMove.includes(parseInt(e.target.id))) {
+      // change the position of two candies
+      squares[candyBeingDragged].style.backgroundImage =
+        e.target.style.backgroundImage;
+      e.target.style.backgroundImage = colorBeingDragged;
+      e.target.style.opacity = "100%";
+    } else {
+      e.target.style.opacity = "100%";
+    }
+  }
+
+  // dropping new candies
+  function dropCandies() {
+    let firstRowIndex = [];
+    for (i = 0; i < width; i++) {
+      firstRowIndex.push(i);
+    }
+    for (i = 0; i < width * (width - 1); i++) {
+      if (squares[i + width].style.backgroundImage === "") {
+        // the [a. b] = [b, a] syntax
+        [
+          squares[i + width].style.backgroundImage,
+          squares[i].style.backgroundImage,
+        ] = [
+          squares[i].style.backgroundImage,
+          squares[i + width].style.backgroundImage,
+        ];
+      }
+      const isFirstRow = firstRowIndex.includes(i);
+      if (isFirstRow && squares[i].style.backgroundImage === "") {
+        squares[i].style.backgroundImage =
+          candyImages[Math.floor(Math.random() * candyImages.length)];
       }
     }
   }
@@ -251,8 +262,12 @@ document.addEventListener("DOMContentLoaded", () => {
   window.setInterval(() => {
     dropCandies();
     checkRowOfFour();
+    dropCandies();
     checkRowOfThree();
+    dropCandies();
     checkColumnOfFour();
+    dropCandies();
     checkColumnOfThree();
+    dropCandies();
   }, 100);
 });

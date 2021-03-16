@@ -19,6 +19,7 @@ body {
 .grid div {
   width: 70px;
   height: 70px;
+  cursor: grab;
 }
 
 .scoreboard {
